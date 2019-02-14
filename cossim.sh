@@ -16,52 +16,48 @@
 
 ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##
 
+##  define usage
+USAGE="\n\tusage:  $0  {cbow|skip} {word one} {word two}\n\n"
+
 ##  which model CBOW or skipgram?
 case $1 in
     CBOW|cbow)
-	MODEL="cossim_cbow.csv.gz"
-        ;;
+	MODEL="cossim_cbow.csv.gz";;
     skip|skipgram)
-	MODEL="cossim_skip.csv.gz"
-        ;;
+	MODEL="cossim_skip.csv.gz";;
     *)
-        printf "\n\tusage:  $0 {cbow|skip} {word one} {word two}\n\n"
-	exit
-        ;;
+        printf "${USAGE}"; exit;;
 esac
 
 ##  get word one
 case $2 in
     "")
-        printf "\n\tusage:  $0 {cbow|skip} {word one} {word two}\n\n"
-	exit
-        ;;
+        printf "${USAGE}"; exit;;
     *)
-	WONE=$2
-        ;;
+	WONE=$2;;
 esac
 
 ##  get word two
 case $3 in
     "")
-        printf "\n\tusage:  $0 {cbow|skip} {word one} {word two}\n\n"
-	exit
-        ;;
+        printf "${USAGE}"; exit;;
     *)
-	WTWO=$3
-        ;;
+	WTWO=$3;;
 esac
 
 
 ##  get the position of word two
-PTWO=$( zgrep -n "${WTWO}," $MODEL | head -n2 | tail -n1 | awk -F ',' '{print $1}' | awk -F ':' '{print $1}' )
+PTWO=$( zgrep -i -m 2 -n "${WTWO}," $MODEL | tail -n1 | awk -F ',' '{print $1}' | awk -F ':' '{print $1}' )
 
 ##  write the awk program
 PROG="{print \$$PTWO}"
 
 ##  capture the cosine measure
-COSM=$( zgrep -n "${WONE}," $MODEL | head -n2 | tail -n1 | awk -F ',' "$PROG" )
+COSM=$( zgrep -i -m 2 -n "${WONE}," $MODEL | tail -n1 | awk -F ',' "$PROG" )
 
 ##  print the similarity
-printf "cosine similarity between \"%s\" and \"%s\":\n" $WONE $WTWO
-printf "%.4f\n" $COSM
+printf "\n\tcosine similarity between \"%s\" and \"%s\":\n" $WONE $WTWO
+printf "\t%.4f\n\n" $COSM
+
+##  that's all, folks!
+exit

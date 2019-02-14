@@ -31,8 +31,9 @@ from utils import print_time
 
 ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  
 
-context = [mx.cpu()]
+context = mx.cpu()
 datafile = 'scnwiki-20190201.tsv'
+
 model = SG
 parmfile = './logs/sicilian-skip_2019-02-13.params'
 otcsv = 'cossim_skip.csv'
@@ -68,7 +69,7 @@ svecs = wvecs[:slimit,]
 
 ##  >>> len(vocab)
 ##  39050
-##  >>> len( np.array(idx_to_counts)[ np.array(idx_to_counts)>=100 ] )
+##  >>> slimit
 ##  2751
 ##  >>> idx_to_counts[2750:2752]
 ##  [100, 99]
@@ -104,7 +105,7 @@ otfile.write(',')
 
 with open(otcsv, 'a') as otfile:
    writer = csv.writer(otfile)
-   writer.writerow(vocab.idx_to_token)
+   writer.writerow(vocab.idx_to_token[:slimit])
    for rowname, rowdata in zip(vocab.idx_to_token, cosmat.asnumpy()):
       writer.writerow([rowname] + rowdata.tolist())
 
