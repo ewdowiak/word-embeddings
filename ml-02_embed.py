@@ -35,11 +35,11 @@ context = mx.cpu()
 datafile = 'scnwiki-20190201.tsv'
 
 model = SG
-parmfile = './logs/sicilian-skip_2019-02-13.params'
-otcsv = 'cossim_skip.csv'
+parmfile = './logs/scnwiki-skip_2019-07-18.params'
+otcsv = './logs/cossim_scnwiki-skip.csv'
 #model = CBOW
-#parmfile = './logs/sicilian-cbow_2019-02-13.params'
-#otcsv = 'cossim_cbow.csv'
+#parmfile = './logs/scnwiki-cbow_2019-07-18.params'
+#otcsv = './logs/cossim_scnwiki-cbow.csv'
 
 output_dim = 300
 batch_size = 1024
@@ -63,15 +63,21 @@ embedding.load_parameters(parmfile)
 ##  get the word vectors
 wvecs = embedding.embedding_out.weight.data()
 
-##  "short vectors" -- only the words with over 100 appearances
+##  "short vectors" -- only the words with at least 100 appearances
 slimit = len( np.array(idx_to_counts)[ np.array(idx_to_counts)>=100 ] )
 svecs = wvecs[:slimit,]
 
 ##  >>> len(vocab)
-##  39050
+##  39010
+
 ##  >>> slimit
-##  2751
-##  >>> idx_to_counts[2750:2752]
+##  5026
+##  >>> idx_to_counts[5025:5027]
+##  [50, 49]
+
+##  >>> slimit
+##  2603
+##  >>> idx_to_counts[2602:2604]
 ##  [100, 99]
 
 ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##
@@ -95,6 +101,11 @@ def cos_mat( vecs ):
 ##  manipulate prices
 print('cos_sim(\'manipulari\', \'prezzi\')')
 print(cos_sim('manipulari', 'prezzi'))
+
+## cos_sim('manipulari', 'prezzi')
+## 
+## [0.5213489]
+## <NDArray 1 @cpu(0)>
 
 ##  get full cosine matrix of SHORT vectors
 cosmat = cos_mat( svecs )

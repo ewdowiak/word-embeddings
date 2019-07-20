@@ -10,4 +10,4 @@ Having generated the data file, we can then train a skipgram model by running:
 
 With the trained model in hand, we can use the `ml-02_embed.py` script to retrieve the word vectors and cosine similarity matrix.  That matrix is very large, so I also wrote the `cossim.sh` shell script to access a particular element.  And I wrote the `cossim_slim.pl` script to retrieve the ten words that are most similar in context.
 
-For more information, please visit [Napizia](https://www.napizia.com/pages/ml-sicilian/ml-scn_p02.shtml).  We look forward to seeing you there!
+For more information, please see my notes at: [doviak.net](https://www.doviak.net/pages/ml-sicilian/ml-scn_p02.shtml). 

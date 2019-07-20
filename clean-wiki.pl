@@ -38,7 +38,7 @@
 use strict;
 use warnings;
 
-## my $infile = "scnwiki-20190201_head.xml";
+##my $infile = "scnwiki-20190201_head.xml";
 my $infile = "scnwiki-20190201.xml";
 my $otfile = "scnwiki-20190201.tsv";
 
@@ -87,10 +87,12 @@ while (my $line = <$infh>) {
 
 	##  remove more stuff
 	$line =~ s/[\(\)\[\]\{\}\+\=\'\"\-\*\/\#\|\%\@\$_]/ /g;
-	$line =~ s/[\;\:\.\!\?\,\-]/ /g;
 	$line =~ s/\d+/ /g;
 	$line =~ s/’/ /g;
-	
+
+	##  add a space between punctuation and words
+	$line =~ s/([\;\:\.\!\?\,\-])/ $1/g;
+
 	##  tack a space onto the end 
 	$line =~ s/$/ /g;
 	
@@ -149,7 +151,7 @@ while (my $line = <$infh>) {
 	$line =~ s/\303\247/~CC~/g; 
     
 	##  restrict the character set
-	$line =~ s/[^a-zACEGIOU~]/ /g;
+	$line =~ s/[^a-zACEGIOU~\.\!\?]/ /g;
 	
 	##  revert the character set
 	##  grave accents
@@ -176,31 +178,36 @@ while (my $line = <$infh>) {
 	##  crazy c
 	#$line =~ s/~CC~/\303\247/g; 
 	$line =~ s/~CC~/c/g; 
-
-    
+	
 	##  get rid of newlines and excess space
 	$line =~ s/$/ /g;
-	$line =~ s/\n/ /g;  
-	$line =~ s/\s+/\t/g;
-	$line =~ s/^\t//;
+	$line =~ s/\s+/ /g;
 
-    
-	# convert to lowercase letters and spaces, spell digits
-	#$line =~ $_=" $_ ";
-	#$line =~ s/0/ zero /g;
-	#$line =~ s/1/ one /g;
-	#$line =~ s/2/ two /g;
-	#$line =~ s/3/ three /g;
-	#$line =~ s/4/ four /g;
-	#$line =~ s/5/ five /g;
-	#$line =~ s/6/ six /g;
-	#$line =~ s/7/ seven /g;
-	#$line =~ s/8/ eight /g;
-	#$line =~ s/9/ nine /g;
-	#$line =~ tr/a-z/ /cs;
-	#chop $line;
+	##  add <BOS> and <EOS>
+	$line =~ s/([\.\!\?])/$1 <EOS> <BOS>/g;
+	$line =~ s/ <BOS>$//;
+	$line =~ s/$/<EOS>/;
+	$line =~ s/^/<BOS> /;
+	$line =~ s/\s+/ /g;
 
+	##  remove stopwords
+	$line = rm_stopwords( $line );
+
+	##  remove empty sequences
+	$line =~ s/<BOS> <EOS>//g;
+	$line =~ s/<BOS> \. <EOS>//g;
+	$line =~ s/<BOS> \! <EOS>//g;
+	$line =~ s/<BOS> \? <EOS>//g;
+	$line =~ s/\s+/ /g;
 	
+	##  make sure there is one space at end of sequence
+	$line =~ s/<EOS>$/<EOS> /g;
+	$line =~ s/<BOS> ?/<BOS> /g;
+	
+	##  convert spaces to tabs
+	$line =~ s/\s+/\t/g;
+	
+	##  print it out
 	print $otfh $line ;
 	
     }
@@ -210,3 +217,39 @@ while (my $line = <$infh>) {
 
 close $otfh;
 close $infh;
+
+##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##
+
+##  SUBROUTINES
+##  ===========
+
+sub rm_stopwords {
+
+    my $line = $_[0];
+    
+    my @stops ;
+    push( @stops , "a", "â", "ad", "al", "all", "and", "are", "args", "as", "at" );
+    push( @stops , "b", "be", "by", "c", "ca", "câ", "can", "cc", "cci", "ccu", "ch", "che", "chi", "chî" );
+    push( @stops , "chidda", "chiddi", "chiddu", "chissa","chissi","chissu", "chista", "chisti", "chistu" );
+    push( @stops , "ci", "colspan", "com", "con", "cu", "cû", "cui", "d", "da", "dâ" );
+    push( @stops , "dda", "ddi", "ddu", "de", "dê", "dei", "del", "della", "di", "dî", "do", "dô", "du", "dû" );
+    push( @stops , "e", "ê", "ecc", "ed", "end", "èranu", "et", "ex", "f", "for", "from", "g", "h", "ha", "http" );
+    push( @stops , "i", "idda", "iddi", "iddu", "if", "ii", "iii", "il", "in", "is", "it", "iv" );
+    push( @stops , "j", "jpg", "ju", "k", "km", "l", "la", "le", "li", "lu" );
+    push( @stops , "m", "ma", "may", "me", "metri", "mi", "mp", "msg" );
+    push( @stops , "n", "na", "ni", "nn", "nna", "nnâ", "nni", "nnô", "nome", "nta", "ntâ", "ntê", "nti", "nto", "ntô" );
+    push( @stops , "nu", "o", "ô", "of", "oi", "on", "or", "org" );
+    push( @stops , "p", "pâ", "per", "pi", "pî", "png", "poi", "ppi", "pri", "pû", "px", "r", "ra", "ri", "ru" );
+    push( @stops , "s", "se", "si", "sô", "ssa", "ssi", "ssu", "st", "sta", "sti", "stu", "su", "svg", "t", "te" );
+    push( @stops , "that", "the", "then", "this", "ti", "top", "tra", "tu", "u", "un", "una", "utc" );
+    push( @stops , "v", "vi", "vucali", "we", "will", "with", "www", "x", "you", "your", "z" );
+
+    my $stopre = join( ' | ' , @stops ) ;
+    $stopre = ' ' . $stopre . ' ' ;
+    
+    $line =~ s/$stopre/ /g;
+    $line =~ s/\s+/ /g;
+    $line =~ s/$stopre/ /g;
+    
+    return $line;
+}

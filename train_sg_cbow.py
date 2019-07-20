@@ -1,30 +1,21 @@
 # coding: utf-8
 
-##  Copyright 2019 Eryk Wdowiak
-##  
-##  Licensed under the Apache License, Version 2.0 (the "License");
-##  you may not use this file except in compliance with the License.
-##  You may obtain a copy of the License at
-##  
-##      http://www.apache.org/licenses/LICENSE-2.0
-##  
-##  Unless required by applicable law or agreed to in writing, software
-##  distributed under the License is distributed on an "AS IS" BASIS,
-##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-##  See the License for the specific language governing permissions and
-##  limitations under the License.
-
-##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##
-
-##  NOTE:  This script is almost identical to the original "train_sg_cbow.py" script
-##  in the MXNet Gluon NLP tutorial: "Word Embeddings Training and Evaluation" [1].
-##  The only difference is that I added "nlp.data.TSVDataset(args.data)" to the
-##  "train" function, so that users can pass their own input file to this script.
-##  
-##  References:
-##  [1] https://gluon-nlp.mxnet.io/examples/word_embedding/word_embedding_training.html
-
-##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##  ##
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
 
 # pylint: disable=global-variable-undefined,wrong-import-position
 """SkipGram and CBOW embedding models
@@ -283,9 +274,9 @@ def train(args):
     # Evaluate
     with print_time('mx.nd.waitall()'):
         mx.nd.waitall()
-    with print_time('evaluate'):
-        evaluate(args, embedding, vocab, num_update,
-                 eval_analogy=not args.no_eval_analogy)
+    #with print_time('evaluate'):
+    #    evaluate(args, embedding, vocab, num_update,
+    #             eval_analogy=not args.no_eval_analogy)
 
     # Save params
     with print_time('save parameters'):
